@@ -27,10 +27,12 @@ jobs:
     - name: Build Docker Image
       run: |
         docker build -t yexhz/docker-graphql:0.0.2 .
+        docker build -t yexhz/docker-graphql:latest .
       
     - name: Push Docker Image
       run: |
         docker push yexhz/docker-graphql:0.0.2
+        docker push yexhz/docker-graphql:latest
 
     
     # - name: Build the Docker image
