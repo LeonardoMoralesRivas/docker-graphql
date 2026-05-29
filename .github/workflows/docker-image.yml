@@ -35,20 +35,13 @@ jobs:
         DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
       run:  |
         docker login -u $DOCKER_USER -p $DOCKER_PASS
-        echo "New Version: $NEW_VERSION !!!!!!!"
-    - name: Build Docker Image
+        
+    - name: Build and Push Docker Image
       env:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:$NEW_VERSION .
-        docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:latest .
-      
-    - name: Push Docker Image
-      env:
-        NEW_VERSION: ${{ steps.version.outputs.version }}
-      run: |
-        docker push yexhz/docker-graphql:$NEW_VERSION
-        docker push yexhz/docker-graphql:latest
+        docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:$NEW_VERSION --push .
+        docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:latest --push .
 
     
     # - name: Build the Docker image
