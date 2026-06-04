@@ -4,7 +4,7 @@
 This repo its a Gtihub Actions workflow practice to automate the CI/CD and updating the version of the project
 
 ## Pipeline
-This Actions make a buildx for AMD64 and ARM64 then we push the images to docker hub and updating the tag using semantic versioning depends of the type of push in the repo 
+This Actions make a buildx for AMD64 and ARM64. Then we push the images to docker hub and update the tag using semantic versioning depends of the type of push in the repo 
 
 ## Stack
 1. NestJS
