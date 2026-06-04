@@ -21,6 +21,13 @@
 </p>
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+  
+## Notes
+This repo use a Github Actions workflow to build and push a new docker image and update the tag using semantic versioning.
+
+Who to use it:
+- use "major" for braking changes --> 1.4.0 --> 2.0.0
+- use "feat" for new features --> 1.4.0 --> 1.5.0
 
 ## Description
 
