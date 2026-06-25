@@ -96,5 +96,3 @@ jobs:
             sudo docker run -d --name app -p 3000:3000 yexhz/docker-graphql:latest
 
     
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
