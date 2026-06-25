@@ -41,6 +41,59 @@ jobs:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
         docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:$NEW_VERSION -t yexhz/docker-graphql:latest --push .
+  deploy:
+    needs: buildx
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.15.6
+ 
+      - name: Terraform Init
+        working-directory: ./terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform init
+ 
+      - name: Terraform Apply
+        working-directory: ./terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: terraform apply -auto-approve
+ 
+      - name: Get EC2 Public IP
+        id: get_ip
+        working-directory: ./terraform
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
+ 
+      - name: Wait for SSH to be ready
+        run: sleep 60
+ 
+      - name: Deploy container via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ steps.get_ip.outputs.ip }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            sudo apt-get update -y
+            sudo apt-get install -y docker.io
+            sudo systemctl start docker
+            sudo docker pull yexhz/docker-graphql:latest
+            sudo docker stop app || true
+            sudo docker rm app || true
+            sudo docker run -d --name app -p 3000:3000 yexhz/docker-graphql:latest
 
     
     # - name: Build the Docker image
