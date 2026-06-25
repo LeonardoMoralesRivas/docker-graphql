@@ -40,7 +40,7 @@ jobs:
       env:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        docker buildx build --platform linux/amd64,linux/arm64 -t yexhz/docker-graphql:$NEW_VERSION -t yexhz/docker-graphql:latest --push .
+        docker buildx build --platform linux/amd64 -t yexhz/docker-graphql:$NEW_VERSION -t yexhz/docker-graphql:latest --push .
   deploy:
     needs: buildx
     runs-on: ubuntu-latest
@@ -59,6 +59,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: terraform init
  
       - name: Terraform Apply
@@ -66,6 +67,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: terraform apply -auto-approve
  
       - name: Get EC2 Public IP
@@ -74,6 +76,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
         run: |
           echo "ip=$(terraform output -raw instance_public_ip)" >> "$GITHUB_OUTPUT"
  
