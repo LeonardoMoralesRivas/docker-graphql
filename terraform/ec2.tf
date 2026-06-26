@@ -4,7 +4,7 @@ data "aws_ssm_parameter" "ubuntu_ami" {
 
 resource "aws_instance" "app_server" {
   ami                    = data.aws_ssm_parameter.ubuntu_ami.value
-  instance_type          = "t2.micro"
+  instance_type          = "t3.micro"
   key_name               = "devops-project-key"
   vpc_security_group_ids = [aws_security_group.app_sg.id]
 
